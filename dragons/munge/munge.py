@@ -118,6 +118,8 @@ def mass_function(mass, volume, bins, range=None, poisson_uncert=False, return_e
 
     if range is not None and isinstance(bins, str):
         mass = mass[(mass >= range[0]) & (mass <= range[1])]
+    
+    mass = mass[(~np.isnan(mass)) & (~np.isinf(mass))]
 
     vals, edges = np.histogram(mass, bins, range, **kwargs)
     width = edges[1] - edges[0]
