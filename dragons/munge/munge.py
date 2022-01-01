@@ -344,6 +344,6 @@ def power_spectrum(grid, side_length, n_bins, dimensional=False):
         uncert[ii] = power[ii] / np.sqrt(len(k[sel]))
 
     if dimensional:
-        return kmean, power, uncert, power_dim, uncert_dim
+        return kmean, power, uncert, power_dim, uncert_dim, k_edges
     else:
-        return kmean, power, uncert
+        return kmean, power, uncert, k_edges
