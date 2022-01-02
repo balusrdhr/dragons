@@ -7,7 +7,7 @@ import re
 import numpy as np
 from pandas import DataFrame
 from scipy.stats import describe as sp_describe
-from .tophat_filter import tophat_filter
+#from .tophat_filter import tophat_filter
 
 import logging
 
