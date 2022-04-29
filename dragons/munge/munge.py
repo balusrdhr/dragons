@@ -262,7 +262,7 @@ def smooth_grid(grid, side_length, radius, filt="tophat"):
     return grid
 
 
-def power_spectrum(grid, side_length, n_bins, dimensional=False):
+def power_spectrum(grid, side_length, n_bins, zero_mean = False, dimensional=False):
 
     r"""Calculate the dimensionless and dimensional power spectra of a grid (G):
 
@@ -275,13 +275,18 @@ def power_spectrum(grid, side_length, n_bins, dimensional=False):
     Parameters
     ----------
     grid : ndarray
-        The grid from which to construct the power spectrum
+        The grid from which to construct the power spectrum. 
+        NOTE: The grid SHOULD NOT be a zero-mean quantity by default.
 
     side_length : float
         The side length of the grid (assumes all side lengths are equal)
 
     n_bins : int
         The number of k bins to use
+    
+    zero_mean : Boolean
+        Grids can be passed as a non-zero-mean quantity. If False the fluctuations will be computed.
+        Default is False
 
     dimensional : Boolean (optional)
         Switch for calculating dimensional power spectrum
@@ -306,6 +311,12 @@ def power_spectrum(grid, side_length, n_bins, dimensional=False):
     """
 
     volume = side_length ** 3
+
+    if not zero_mean:
+        grid_mean = grid.mean()
+        grid = grid/grid.mean() - 1
+    else:
+        grid_mean = 1
 
     # do the FFT (note the normalising 1.0/N_cells factor)
     ft_grid = np.fft.rfftn(grid) / float(grid.size)
@@ -342,8 +353,8 @@ def power_spectrum(grid, side_length, n_bins, dimensional=False):
 
         power[ii] = val.mean()
         uncert[ii] = power[ii] / np.sqrt(len(k[sel]))
-
+    
     if dimensional:
-        return kmean, power, uncert, power_dim, uncert_dim, k_edges
+        return kmean, (grid_mean**2) * power, uncert, power_dim, uncert_dim, k_edges
     else:
-        return kmean, power, uncert, k_edges
+        return kmean, (grid_mean**2) * power, uncert, k_edges
